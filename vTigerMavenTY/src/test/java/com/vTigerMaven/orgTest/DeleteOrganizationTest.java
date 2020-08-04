@@ -27,22 +27,20 @@ public class DeleteOrganizationTest extends BaseClass{
 		String org_Name = exUtils.fetchDataFromExcel("Organization", 1, 2) + "_" + wUtils.generateRandomNumber();
 		String org_Industry = exUtils.fetchDataFromExcel("Organization", 1, 3);
 		String org_Type = exUtils.fetchDataFromExcel("Organization", 1, 4);
-		String org_search_field = exUtils.fetchDataFromExcel("Organization", 7, 2);
-		String expNoOrgMsg = exUtils.fetchDataFromExcel("Organization", 10, 2);
+		String org_search_field = exUtils.fetchDataFromExcel("Organization", 7, 2);		
 		
+		//Navigate to organizations module
 		navigateToOrg();
+		//Create a new organization.
 		createOrg(org_Name, org_Industry, org_Type);
+		//Navigate back to organizations module
 		navigateToOrg();
+		//Search for the created organization.
 		searchOrg(org_Name, org_search_field);
-		
-		Thread.sleep(2000);		
+		//Delete the created organization.
 		deleteOrg(org_Name);
-		Thread.sleep(2000);
-		searchOrg(org_Name, org_search_field);
 		
-		String actNoOrgMsg = driver.findElement(By.xpath("//span[@class='genHeaderSmall']")).getText();
-		Assert.assertTrue(actNoOrgMsg.contains(expNoOrgMsg));
-		System.out.println("Organization deleted successfully.");
+		//searchOrg(org_Name, org_search_field);
 	}
 	
 	/**
@@ -97,10 +95,17 @@ public class DeleteOrganizationTest extends BaseClass{
 	/**
 	 * Used to delete selected organization.
 	 * @param orgName
+	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	public void deleteOrg(String orgName)
+	public void deleteOrg(String orgName) throws Throwable
 	{
+		String expNoOrgMsg = exUtils.fetchDataFromExcel("Organization", 10, 2);
 		driver.findElement(By.xpath("//a[text()='" + orgName + "']/../following-sibling::td[last()]/a[last()]")).click();
 		driver.switchTo().alert().accept();
+		
+		String actNoOrgMsg = driver.findElement(By.xpath("//span[@class='genHeaderSmall']")).getText();
+		Assert.assertTrue(actNoOrgMsg.contains(expNoOrgMsg));
+		System.out.println("Organization deleted successfully.");
 	}
 }

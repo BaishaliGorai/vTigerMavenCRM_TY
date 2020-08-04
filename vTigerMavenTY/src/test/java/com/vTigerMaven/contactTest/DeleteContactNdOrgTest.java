@@ -31,15 +31,24 @@ public class DeleteContactNdOrgTest extends BaseClass {
 		String searchContactTxt = exUtils.fetchDataFromExcel("Contact", 4, 2);
 		String searchContactField = exUtils.fetchDataFromExcel("Contact", 4, 3);
 		
+		//Create an organization.
 		createOrg(org_Name, org_Industry, org_Type);		
+		//Create contact with that organization.
 		createContact(org_Name);
+		//Navigate to contacts.
 		navigateToContacts();
-		Thread.sleep(2000);
+		//Search the created contact in contacts.
 		searchContact(searchContactTxt, searchContactField);
-		Thread.sleep(2000);
+		//Delete the created contact and its respectective organization.
 		deleteContact(searchContactTxt);
 	}
 	
+	/**
+	 * Used to create an organization
+	 * @param orgName
+	 * @param orgIndustry
+	 * @param orgType
+	 */
 	public void createOrg(String orgName, String orgIndustry, String orgType)
 	{
 		driver.findElement(By.linkText("Organizations")).click();
@@ -61,11 +70,19 @@ public class DeleteContactNdOrgTest extends BaseClass {
 		System.out.println(orgName + " created successfully");
 	}
 	
+	/**
+	 * Used to navigate to contacts module
+	 */
 	public void navigateToContacts()
 	{
 		driver.findElement(By.linkText("Contacts")).click();
 	}
 	
+	/**
+	 * Used to create a contact with organization
+	 * @param orgName
+	 * @throws Throwable
+	 */
 	public void createContact(String orgName) throws Throwable
 	{
 		String salutationType = exUtils.fetchDataFromExcel("Contact", 1, 4);
@@ -109,6 +126,12 @@ public class DeleteContactNdOrgTest extends BaseClass {
 		System.out.println("Contact created successfully");
 	}	
 
+	/**
+	 * Used to search contact.
+	 * @param search_contact_txt
+	 * @param search_contact_field
+	 * @throws Throwable
+	 */
 	public void searchContact(String search_contact_txt, String search_contact_field) throws Throwable
 	{		
 		driver.findElement(By.name("search_text")).sendKeys(search_contact_txt);
@@ -117,6 +140,11 @@ public class DeleteContactNdOrgTest extends BaseClass {
 		driver.findElement(By.name("submit")).click();		
 	}
 	
+	/**
+	 * Used to delete the selected contact and also delete the contact's organization
+	 * @param delContact
+	 * @throws Throwable
+	 */
 	public void deleteContact(String delContact) throws Throwable
 	{
 		String delContactOrg = driver.findElement(By.xpath("//a[text()='" + delContact + "']/../following-sibling::td[2]/a")).getText();
@@ -129,20 +157,12 @@ public class DeleteContactNdOrgTest extends BaseClass {
 		Assert.assertTrue(actNoContactMsg.contains(expNoContactMsg));
 		System.out.println("Contact deleted successfully.");
 		
-		Thread.sleep(2000);
-		driver.findElement(By.linkText("Organizations")).click();
-		String orgSearchField = exUtils.fetchDataFromExcel("Contact", 4, 8);	
-		String expNoOrgMsg = exUtils.fetchDataFromExcel("Contact", 4, 9);
+		driver.findElement(By.linkText("Organizations")).click();		
 		
-		searchOrg(delContactOrg, orgSearchField);
-		Thread.sleep(2000);		
+		searchOrg(delContactOrg);			
 		deleteOrg(delContactOrg);
-		Thread.sleep(2000);
-		searchOrg(delContactOrg, orgSearchField);
 		
-		String actNoOrgMsg = driver.findElement(By.xpath("//span[@class='genHeaderSmall']")).getText();
-		Assert.assertTrue(actNoOrgMsg.contains(expNoOrgMsg));
-		System.out.println("Organization deleted successfully.");
+		//searchOrg(delContactOrg);	
 	}
 
 	/**
@@ -150,8 +170,10 @@ public class DeleteContactNdOrgTest extends BaseClass {
 	 * @param orgName
 	 * @param orgSearchField
 	 */
-	public void searchOrg(String orgName, String orgSearchField)
+	public void searchOrg(String orgName) throws Throwable
 	{
+		String orgSearchField = exUtils.fetchDataFromExcel("Contact", 4, 8);
+		
 		WebElement searchTxt = driver.findElement(By.name("search_text"));
 		searchTxt.sendKeys(orgName);
 		WebElement wb = driver.findElement(By.name("search_field"));
@@ -161,10 +183,18 @@ public class DeleteContactNdOrgTest extends BaseClass {
 	/**
 	 * Used to delete selected organization.
 	 * @param orgName
+	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	public void deleteOrg(String orgName)
+	public void deleteOrg(String orgName) throws Throwable
 	{
+		String expNoOrgMsg = exUtils.fetchDataFromExcel("Contact", 4, 9);
+		
 		driver.findElement(By.xpath("//a[text()='" + orgName + "']/../following-sibling::td[last()]/a[last()]")).click();
 		driver.switchTo().alert().accept();
+		
+		String actNoOrgMsg = driver.findElement(By.xpath("//span[@class='genHeaderSmall']")).getText();
+		Assert.assertTrue(actNoOrgMsg.contains(expNoOrgMsg));
+		System.out.println("Organization deleted successfully.");
 	}
 }
