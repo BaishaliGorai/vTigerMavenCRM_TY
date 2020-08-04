@@ -89,10 +89,10 @@ public class BaseClass {
 	@AfterMethod
 	public void logout()
 	{
-		/*System.out.println("Logging out of the application");
+		System.out.println("Logging out of the application");
 		WebElement wb = driver.findElement(By.xpath("//span[text()=' Administrator']/../following-sibling::td/img"));
 		wUtils.handleMouseHover(wb);
-		driver.findElement(By.linkText("Sign Out")).click();*/
+		driver.findElement(By.linkText("Sign Out")).click();
 	}
 	
 	/**
@@ -101,8 +101,8 @@ public class BaseClass {
 	@AfterClass
 	public void closeBrowser()
 	{
-		//System.out.println("Closing the browser");
-		//driver.close();
+		System.out.println("Closing the browser");
+		driver.close();
 	}
 	
 	/**
@@ -112,6 +112,6 @@ public class BaseClass {
 	@AfterSuite
 	public void disconnectDB() throws SQLException
 	{
-		//dbUtlis.disconnectDB();
+		dbUtlis.disconnectDB();
 	}
 }
